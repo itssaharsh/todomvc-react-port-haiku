@@ -1,2 +1,7 @@
 node_modules/
 dist/
+
+# Kane CLI: recordings and evidence hold account details
+.testmuai/evidence/
+**/output-*/.internal/
+*.evidence

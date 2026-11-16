@@ -1,0 +1,14 @@
+{
+  "active_todo_title": {
+    "value": "Pay rent",
+    "secret": false
+  },
+  "completed_todo_title": {
+    "value": "Book the dentist",
+    "secret": false
+  },
+  "start_url": {
+    "value": "http://127.0.0.1:7003/",
+    "secret": false
+  }
+}

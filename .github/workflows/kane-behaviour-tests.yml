@@ -1,0 +1,33 @@
+# Runs the behaviour suite Ditto handed over (tests/kane) against a fresh build of the rewrite,
+# using TestMu's official Kane CLI action. Add LT_USERNAME and LT_ACCESS_KEY as repository secrets
+# (TestMu dashboard → Settings → Keys), then switch the trigger to pull_request if you like.
+name: Kane behaviour tests
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  behaviour:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build and serve the app on 127.0.0.1:7002
+        run: |
+          npm ci || npm install
+          npm run build
+          npx --yes http-server dist -p 7002 -a 127.0.0.1 -s &
+          npx --yes wait-on http://127.0.0.1:7002
+      # Kane reads {{start_url}} and the test values from .testmuai/variables/ditto.json.
+      - uses: LambdaTest/kane-cli/integrations/github-action/kane-cli-browser-run@main
+        with:
+          test-files: "tests/kane/*_test.md"
+          parallel: "3"
+          username: ${{ secrets.LT_USERNAME }}
+          access-key: ${{ secrets.LT_ACCESS_KEY }}
